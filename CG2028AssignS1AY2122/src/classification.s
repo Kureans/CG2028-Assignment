@@ -9,7 +9,7 @@
 @ (c) CG2028 Teaching Team, ECE NUS, 2021
 
 @ student 1: Name: Teng Yi Shiong , Matriculation No.: A0217611N
-@ student 2: Name: , Matriculation No.:
+@ student 2: Name: Swaminathan Varun, Matriculation No.: A0214565E
 
 @Register map
 @R0 - N, returns class
@@ -25,7 +25,7 @@
 
 classification:
 @ PUSH / save (only those) registers which are modified by your function
-		PUSH {R1-R8, R14}
+		PUSH {R1-R8, LR}
 @ parameter registers need not be saved.
 
 @ write asm function body here
@@ -41,32 +41,21 @@ classification:
         SUB R8, R3
         MLA R6, R8, R8, R6 @ Get square of Y value, add square of X value and store back into R6
         CMP R4, R6 @R4 - R6, checks if calc dist is lower than curr min dist
-        ITTE		PL
+
+        ITTE	PL
         LDRPL	R5, [R2], #4 @ Store current label if calc dist is lower than curr min dist
         MOVPL	R4, R6
 		ADDMI   R2, #4 @ Else just increment the label pointer
+
 		SUBS R0, #1
 		BGT LOOP
 
-
-
-
-
-@ branch to SUBROUTINE for illustration only
-		BL SUBROUTINE
 @ prepare value to return (class) to C program in R0
 		MOV R0, R5
-@ POP / restore original register values. DO NOT save or restore R0. Why?
-		POP {R1-R8, R14}
-@ return to C program
-		BX	LR
-
-@ you could write your code without SUBROUTINE
-SUBROUTINE:
-
-		BX LR
+@ POP / restore original register values and return to C program
+		POP {R1-R8, PC}
 
 @label: .word value
 INT_MAX:
-			.word 0x7FFFFFFF
+		.word 0x7FFFFFFF
 @.lcomm label num_bytes
